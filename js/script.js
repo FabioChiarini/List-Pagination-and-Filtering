@@ -24,20 +24,34 @@ for (var i = 0; i < studentsList.length; i += 1){
     joined: joined
   };
 
-
 }
 
 console.log(students)
 
 // function to show just the students for that page (10 students for page)
-function showPage () {
+function showPage (pageNumber) {
+
+  //calculate portion of 10 (or less) students to show
+  studentStartingFrom = (pageNumber * 10) - 10;
+
   const div = document.querySelector('div');
   const remove = document.querySelector('ul');
   div.removeChild(remove);
   const ul = document.createElement('ul');
   ul.className = 'student-list';
   div.appendChild(ul);
-  for (var i = 0; i < 10; i+= 1){
+
+  // condition to check if you are on the last page
+  let increment;
+  if ((students.length - studentStartingFrom) < 10){
+    maxIncrement = students.length - studentStartingFrom;
+  }
+  else {
+    maxIncrement = 10;
+  }
+
+
+  for (var i = studentStartingFrom; i < (studentStartingFrom + maxIncrement); i+= 1){
     const li = document.createElement('li');
     li.className = 'student-item cf';
     ul.appendChild(li);
@@ -70,10 +84,8 @@ function showPage () {
     divStudentJoined.appendChild(displayJoinDate);
   }
 
-showPage();
-
 }
-
+showPage(6);
 
 
 
