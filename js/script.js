@@ -30,12 +30,14 @@ function hideStudents(div) {
   div.removeChild(remove);
 }
 
+
 // function to set new structure for the students to display on a page
 function setPageStructure(div){
   const ul = document.createElement('ul');
   ul.className = 'student-list';
   div.appendChild(ul);
 }
+
 
 /* function to get the increment for the element to display on the page.
 Should return 10 or the remaining number of students if the last page
@@ -51,16 +53,19 @@ function getIncrement(start) {
   return maxIncrement;
 }
 
+
 // function to create the structure of a single students and attach it to the ul
 function showStudent (ul, student) {
+
 
   // function to show the student details on the page
   function displayStudent (student) {
     displayImg.src = student.img;
     displayName.innerHTML = student.name;
     displayEmail.innerHTML = student.email;
-    displayJoinDate.innerHTML = students.joined;
+    displayJoinDate.innerHTML = student.joined;
   }
+
 
   const li = document.createElement('li');
   li.className = 'student-item cf';
@@ -92,6 +97,7 @@ function showStudent (ul, student) {
   displayStudent(student);
 }
 
+
 // function to show just the students for that page (10 students for page)
 function showPage (pageNumber) {
 
@@ -114,27 +120,45 @@ function showPage (pageNumber) {
 }
 
 
+// function that create the pagination link at the bottom of the page
+function appendPageLinks(numberOfPage) {
+
+  const div = document.querySelector('div');
+  const nPagesDiv = document.createElement('div');
+  nPagesDiv.className = 'pagination';
+  div.appendChild(nPagesDiv);
+
+  const nPagesUl = document.createElement('ul');
+  nPagesDiv.appendChild(nPagesUl);
+
+  // create pagination link equals to the number of pages
+  for (var i = 0; i < numberOfPage; i+= 1){
+    const li = document.createElement('li');
+    nPagesUl.appendChild(li);
+    const a =  document.createElement('a');
+    a.href = (i+1);
+    a.innerHTML = (i + 1);
+    li.appendChild(a);
+
+  }
+}
+
+
+
+/* REMEMBER TO DO THIS
+<div class="page-header cf">
+  <h2>Students</h2>
+</div>
+*/
+
+
 
 let students = constructStudentsList();
+// number of pages to display at the bottom
+let numberOfPage = Math.ceil(students.length/10);
 
 showPage(6);
-
-
-
-/***
-   Create the `showPage` function to hide all of the items in the
-   list except for the ten you want to show.
-
-   Pro Tips:
-     - Keep in mind that with a list of 54 students, the last page
-       will only display four.
-     - Remember that the first student has an index of 0.
-     - Remember that a function `parameter` goes in the parens when
-       you initially define the function, and it acts as a variable
-       or a placeholder to represent the actual function `argument`
-       that will be passed into the parens later when you call or
-       "invoke" the function
-***/
+appendPageLinks(numberOfPage);
 
 
 
