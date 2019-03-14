@@ -26,7 +26,7 @@ function constructStudentsList ()  {
 
 // function to remove previous elements from the page
 function hideStudents(div) {
-  const remove = document.querySelector('ul');
+  const remove = document.getElementsByClassName('student-list')[0];
   div.removeChild(remove);
 }
 
@@ -102,10 +102,10 @@ function showStudent (ul, student) {
 function showPage (pageNumber) {
 
   // remove previous elements from the page and set new structure for the students to display on a page
-  const div = document.querySelector('div');
+  const div = document.getElementsByClassName('page')[0];
   hideStudents(div);
   setPageStructure(div);
-  const ul = document.querySelector('ul');
+  const ul = document.getElementsByClassName('student-list')[0];
 
   //calculate portion of 10 (or less) students to show
   let studentStartingFrom = (pageNumber * 10) - 10;
@@ -121,9 +121,9 @@ function showPage (pageNumber) {
 
 
 // function that create the pagination link at the bottom of the page
-function appendPageLinks(numberOfPage) {
+function appendPageLinks(numberOfPages) {
 
-  const div = document.querySelector('div');
+  const div = document.getElementsByClassName('page')[0];
   const nPagesDiv = document.createElement('div');
   nPagesDiv.className = 'pagination';
   div.appendChild(nPagesDiv);
@@ -132,33 +132,71 @@ function appendPageLinks(numberOfPage) {
   nPagesDiv.appendChild(nPagesUl);
 
   // create pagination link equals to the number of pages
-  for (var i = 0; i < numberOfPage; i+= 1){
+  for (var i = 0; i < numberOfPages; i+= 1){
     const li = document.createElement('li');
     nPagesUl.appendChild(li);
     const a =  document.createElement('a');
-    a.href = (i+1);
+    a.href = "#";
     a.innerHTML = (i + 1);
     li.appendChild(a);
-
   }
 }
 
+let students = constructStudentsList();
+// number of pages to display at the bottom
+let numberOfPages = Math.ceil(students.length/10);
+
+showPage(6);
+appendPageLinks(numberOfPages);
 
 
-/* REMEMBER TO DO THIS
-<div class="page-header cf">
-  <h2>Students</h2>
-</div>
+const pages = document.querySelectorAll('a')
+console.log(pages);
+
+for (let i = 0; i < pages.length; i += 1){
+  pages[i].addEventListener('click', (e) => {
+
+    pageNumber = e.target.textContent;
+    showPage(pageNumber);
+    appendPageLinks(numberOfPages);
+
+  });
+}
+
+
+/*
+main();
+function main() {
+  ;
+
+
+
+    console.log("LOOP");
+
+      //pageNumber = pages[i].innerHTML
+      console.log(pages[i]);
+      showPage(pages[i].textContent);
+      appendPageLinks(numberOfPages);
+      main();
+      //console.log(e.target.innerHTML);
+      //return pages[i].innerHTML;
+      });
+  }
+}
+
 */
 
 
 
-let students = constructStudentsList();
-// number of pages to display at the bottom
-let numberOfPage = Math.ceil(students.length/10);
+//console.log(pageNumber);
 
-showPage(6);
-appendPageLinks(numberOfPage);
+
+
+
+
+
+
+
 
 
 
