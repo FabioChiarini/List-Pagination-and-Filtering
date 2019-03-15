@@ -155,14 +155,14 @@ function getPageNumber (pages, a){
 
       // remove the active class from pagination
       for (let h = 0; h < a.length; h += 1){
-        a[h].classList.remove('active');
+        pages[h].classList.remove('active');
       }
 
       pageNumber = e.target.textContent;
       showPage(pageNumber);
 
       // set the active class to the active page
-      a[pageNumber-1].className = 'active';
+      pages[pageNumber-1].className = 'active';
     });
   }
 }
