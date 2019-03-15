@@ -180,10 +180,21 @@ function getPageNumber (pages){
   }
 }
 
+
+// function to search the student based on the user user input
 function searchStudent (button) {
   button.addEventListener('click', () =>{
-    const userInput = document.getElementsByTagName('input')[0];
-    console.log(userInput.value);
+    const userInput = document.getElementsByTagName('input')[0].value;
+    let results = []
+    // go through every student in the list to find possible match(es)
+    for (var k = 0; k < students.length; k += 1){
+      // check if name or email match the user Input e store the student(s)
+      if (students[k].name.toString().toUpperCase().includes(userInput.toString().toUpperCase())
+          || students[k].email.toString().toUpperCase().includes(userInput.toString().toUpperCase())){
+            results.push(students[k]);
+          }
+    }
+    console.log(results);
   });
 }
 
@@ -194,6 +205,7 @@ let numberOfPages = Math.ceil(students.length/10);
 //display first page and append pagination link
 showPage(1);
 appendPageLinks(numberOfPages);
+
 const divChild = document.getElementsByClassName('page-header cf')[0];
 setSearchStructure(divChild);
 const pages = document.querySelectorAll('a');
