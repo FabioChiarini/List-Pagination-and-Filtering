@@ -125,10 +125,8 @@ function showPage (pageNumber) {
 function appendPageLinks(numberOfPages) {
 
   const div = document.getElementsByClassName('page')[0];
-  console.log(div);
   const nPagesDiv = document.createElement('div');
   nPagesDiv.className = 'pagination';
-  console.log(nPagesDiv);
   div.appendChild(nPagesDiv);
 
   const nPagesUl = document.createElement('ul');
@@ -142,17 +140,29 @@ function appendPageLinks(numberOfPages) {
     a.href = "#";
     a.innerHTML = (i + 1);
     li.appendChild(a);
+
+    // set class active to first page
+    let active = document.getElementsByTagName('a')[0];
+    active.className = 'active';
   }
 }
 
 
 // function to get the page clicked by the user and then display it.
-function getPageNumber (pages){
+function getPageNumber (pages, a){
   for (let i = 0; i < pages.length; i += 1){
     pages[i].addEventListener('click', (e) => {
 
+      // remove the active class from pagination
+      for (let h = 0; h < a.length; h += 1){
+        a[h].classList.remove('active');
+      }
+
       pageNumber = e.target.textContent;
       showPage(pageNumber);
+
+      // set the active class to the active page
+      a[pageNumber-1].className = 'active';
     });
   }
 }
@@ -165,6 +175,6 @@ let numberOfPages = Math.ceil(students.length/10);
 //display first page and append pagination link
 showPage(1);
 appendPageLinks(numberOfPages);
-
-const pages = document.querySelectorAll('a')
-getPageNumber(pages);
+const pages = document.querySelectorAll('a');
+const a = document.getElementsByTagName('a');
+getPageNumber(pages, a);
