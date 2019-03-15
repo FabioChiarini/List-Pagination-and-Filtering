@@ -35,7 +35,7 @@ function hideStudents(div) {
 function setPageStructure(div){
   const ul = document.createElement('ul');
   ul.className = 'student-list';
-  div.appendChild(ul);
+  div.parentNode.insertBefore(ul, div.nextSibling);
 }
 
 
@@ -104,7 +104,8 @@ function showPage (pageNumber) {
   // remove previous elements from the page and set new structure for the students to display on a page
   const div = document.getElementsByClassName('page')[0];
   hideStudents(div);
-  setPageStructure(div);
+  const divChild = document.getElementsByClassName('page-header cf')[0];
+  setPageStructure(divChild);
   const ul = document.getElementsByClassName('student-list')[0];
 
   //calculate portion of 10 (or less) students to show
@@ -124,8 +125,10 @@ function showPage (pageNumber) {
 function appendPageLinks(numberOfPages) {
 
   const div = document.getElementsByClassName('page')[0];
+  console.log(div);
   const nPagesDiv = document.createElement('div');
   nPagesDiv.className = 'pagination';
+  console.log(nPagesDiv);
   div.appendChild(nPagesDiv);
 
   const nPagesUl = document.createElement('ul');
@@ -142,66 +145,26 @@ function appendPageLinks(numberOfPages) {
   }
 }
 
+
+// function to get the page clicked by the user and then display it.
+function getPageNumber (pages){
+  for (let i = 0; i < pages.length; i += 1){
+    pages[i].addEventListener('click', (e) => {
+
+      pageNumber = e.target.textContent;
+      showPage(pageNumber);
+    });
+  }
+}
+
+
 let students = constructStudentsList();
 // number of pages to display at the bottom
 let numberOfPages = Math.ceil(students.length/10);
 
-showPage(6);
+//display first page and append pagination link
+showPage(1);
 appendPageLinks(numberOfPages);
 
-
 const pages = document.querySelectorAll('a')
-console.log(pages);
-
-for (let i = 0; i < pages.length; i += 1){
-  pages[i].addEventListener('click', (e) => {
-
-    pageNumber = e.target.textContent;
-    showPage(pageNumber);
-    appendPageLinks(numberOfPages);
-
-  });
-}
-
-
-/*
-main();
-function main() {
-  ;
-
-
-
-    console.log("LOOP");
-
-      //pageNumber = pages[i].innerHTML
-      console.log(pages[i]);
-      showPage(pages[i].textContent);
-      appendPageLinks(numberOfPages);
-      main();
-      //console.log(e.target.innerHTML);
-      //return pages[i].innerHTML;
-      });
-  }
-}
-
-*/
-
-
-
-//console.log(pageNumber);
-
-
-
-
-
-
-
-
-
-
-
-
-/***
-   Create the `appendPageLinks function` to generate, append, and add
-   functionality to the pagination buttons.
-***/
+getPageNumber(pages);
