@@ -33,10 +33,25 @@ function hideStudents(div) {
 
 // function to set new structure for the students to display on a page
 function setPageStructure(div){
-
   const ul = document.createElement('ul');
   ul.className = 'student-list';
   div.parentNode.insertBefore(ul, div.nextSibling);
+}
+
+function setSearchStructure(div) {
+  //create div for searching students
+  const divSearch = document.createElement('div');
+  divSearch.className = 'student-search';
+  div.appendChild(divSearch);
+  //create input bar to search
+  const inputSearch = document.createElement('input');
+  inputSearch.placeholder = "Search for students...";
+  divSearch.appendChild(inputSearch);
+  //create the search button
+  const searchButton = document.createElement('button');
+  searchButton.name = "searchButton";
+  divSearch.appendChild(searchButton);
+  searchButton.textContent = 'SEARCH';
 }
 
 
@@ -165,6 +180,12 @@ function getPageNumber (pages){
   }
 }
 
+function searchStudent (button) {
+  button.addEventListener('click', () =>{
+    const userInput = document.getElementsByTagName('input')[0];
+    console.log(userInput.value);
+  });
+}
 
 let students = constructStudentsList();
 // number of pages to display at the bottom
@@ -173,7 +194,9 @@ let numberOfPages = Math.ceil(students.length/10);
 //display first page and append pagination link
 showPage(1);
 appendPageLinks(numberOfPages);
-
+const divChild = document.getElementsByClassName('page-header cf')[0];
+setSearchStructure(divChild);
 const pages = document.querySelectorAll('a');
-
+const button = document.getElementsByTagName('button')[0];
 getPageNumber(pages);
+searchStudent(button);
