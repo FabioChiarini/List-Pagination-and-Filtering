@@ -33,6 +33,7 @@ function hideStudents(div) {
 
 // function to set new structure for the students to display on a page
 function setPageStructure(div){
+
   const ul = document.createElement('ul');
   ul.className = 'student-list';
   div.parentNode.insertBefore(ul, div.nextSibling);
@@ -149,18 +150,15 @@ function appendPageLinks(numberOfPages) {
 
 
 // function to get the page clicked by the user and then display it.
-function getPageNumber (pages, a){
+function getPageNumber (pages){
   for (let i = 0; i < pages.length; i += 1){
     pages[i].addEventListener('click', (e) => {
-
       // remove the active class from pagination
-      for (let h = 0; h < a.length; h += 1){
+      for (let h = 0; h < pages.length; h += 1){
         pages[h].classList.remove('active');
       }
-
       pageNumber = e.target.textContent;
       showPage(pageNumber);
-
       // set the active class to the active page
       pages[pageNumber-1].className = 'active';
     });
@@ -175,6 +173,7 @@ let numberOfPages = Math.ceil(students.length/10);
 //display first page and append pagination link
 showPage(1);
 appendPageLinks(numberOfPages);
+
 const pages = document.querySelectorAll('a');
-const a = document.getElementsByTagName('a');
-getPageNumber(pages, a);
+
+getPageNumber(pages);
