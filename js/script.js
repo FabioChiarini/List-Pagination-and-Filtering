@@ -195,6 +195,7 @@ function searchStudent (button) {
           }
     }
 
+    //once results are found, display them with new pagination
     let numberOfPages = Math.ceil(results.length/10);
     showPage(1, results);
     removePageLinks();
@@ -204,12 +205,37 @@ function searchStudent (button) {
   });
 }
 
+// function to remove the pagination link
 function removePageLinks(){
   const pageLinks = document.getElementsByClassName('pagination')[0];
   const divPage = document.getElementsByClassName('page')[0];
   divPage.removeChild(pageLinks);
 
 }
+
+// function to dinamically search students while typing
+function studentSearchWhileTyping() {
+  const input = document.getElementsByTagName('input')[0];
+  input.addEventListener('keyup', () => {
+    // go through every student in the list to find possible match(es)
+    let results = [];
+    userInput = input.value;
+    for (var k = 0; k < students.length; k += 1){
+      // check if name or email match the user Input e store the student(s)
+      if (students[k].name.toString().toUpperCase().includes(userInput.toString().toUpperCase())
+          || students[k].email.toString().toUpperCase().includes(userInput.toString().toUpperCase())){
+            results.push(students[k]);
+          }
+        }
+  let numberOfPages = Math.ceil(results.length/10);
+  showPage(1, results);
+  removePageLinks();
+  appendPageLinks(numberOfPages);
+  const pagesSearch = document.querySelectorAll('a');
+  getPageNumber(pagesSearch, results);
+  });
+}
+
 
 let students = constructStudentsList();
 // number of pages to display at the bottom
@@ -219,9 +245,13 @@ let numberOfPages = Math.ceil(students.length/10);
 showPage(1, students);
 appendPageLinks(numberOfPages);
 
+// next 5 lines are for basic functionality of the site, without the searching part
 const divChild = document.getElementsByClassName('page-header cf')[0];
 setSearchStructure(divChild);
 const pages = document.querySelectorAll('a');
 const button = document.getElementsByTagName('button')[0];
 getPageNumber(pages, students);
+
+// call the 2 search functions
+studentSearchWhileTyping();
 searchStudent(button);
