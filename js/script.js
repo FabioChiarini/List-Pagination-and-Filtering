@@ -3,7 +3,7 @@ Treehouse Techdegree:
 FSJS project 2 - List Filter and Pagination
 ******************************************/
 
-// function to construct the student list with their respective details
+// function to construct the student list with their respective details, starting from what is alredy in the page
 function constructStudentsList ()  {
   let students = [{}];
   const studentsList = document.querySelectorAll('LI');
@@ -24,25 +24,27 @@ function constructStudentsList ()  {
 }
 
 
-// function to remove previous elements from the page
-function hideStudents(div) {
+// function to remove all the students displayed on the page
+function hideStudents() {
   const remove = document.getElementsByClassName('student-list')[0];
   div.removeChild(remove);
 }
 
 
 // function to set new structure for the students to display on a page
-function setPageStructure(div){
+function setPageStructure(){
   const ul = document.createElement('ul');
   ul.className = 'student-list';
-  div.parentNode.insertBefore(ul, div.nextSibling);
+  divChild.parentNode.insertBefore(ul, divChild.nextSibling);
 }
 
-function setSearchStructure(div) {
+
+// function to set the structure of the search bar and button
+function setSearchStructure() {
   //create div for searching students
   const divSearch = document.createElement('div');
   divSearch.className = 'student-search';
-  div.appendChild(divSearch);
+  divChild.appendChild(divSearch);
   //create input bar to search
   const inputSearch = document.createElement('input');
   inputSearch.placeholder = "Search for students...";
@@ -73,7 +75,6 @@ function getIncrement(start, listOfStudents) {
 // function to create the structure of a single students and attach it to the ul
 function showStudent (ul, student) {
 
-
   // function to show the student details on the page
   function displayStudent (student) {
     displayImg.src = student.img;
@@ -81,7 +82,6 @@ function showStudent (ul, student) {
     displayEmail.innerHTML = student.email;
     displayJoinDate.innerHTML = student.joined;
   }
-
 
   const li = document.createElement('li');
   li.className = 'student-item cf';
@@ -114,14 +114,12 @@ function showStudent (ul, student) {
 }
 
 
-// function to show just the students for that page (10 students for page)
+// function to show just the students for that page (10 students for page, less if page is the last one)
 function showPage (pageNumber, listOfStudents) {
 
   // remove previous elements from the page and set new structure for the students to display on a page
-  const div = document.getElementsByClassName('page')[0];
-  hideStudents(div);
-  const divChild = document.getElementsByClassName('page-header cf')[0];
-  setPageStructure(divChild);
+  hideStudents();
+  setPageStructure();
   const ul = document.getElementsByClassName('student-list')[0];
 
   //calculate portion of 10 (or less) students to show
@@ -140,7 +138,6 @@ function showPage (pageNumber, listOfStudents) {
 // function that create the pagination link at the bottom of the page
 function appendPageLinks(numberOfPages) {
 
-  const div = document.getElementsByClassName('page')[0];
   const nPagesDiv = document.createElement('div');
   nPagesDiv.className = 'pagination';
   div.appendChild(nPagesDiv);
@@ -181,7 +178,55 @@ function getPageNumber (pages, listOfStudents){
 }
 
 
-// function to search the student based on the user user input
+// function to remove the pagination link
+function removePageLinks(){
+  const pageLinks = document.getElementsByClassName('pagination')[0];
+  div.removeChild(pageLinks);
+}
+
+
+// function to handle no results --> create the structure and display "no results"
+function noResults (flag) {
+  /* flag to identify if it is the first time you get no results of if the previuos
+  searches already returned no results (and in that case, nothing should be done
+  by the function) */
+  if (flag === 0) {
+    removePageLinks();
+    hideStudents();
+    const noStudent = document.createElement('h1');
+    noStudent.textContent = 'NO STUDENT WAS FOUND';
+    div.appendChild(noStudent);
+  }
+}
+
+
+function printSearchResults (results) {
+  // check if results array is empty and, if so, display it to the page
+  if (results.length === 0) {
+    noResults(noResultsFlag);
+    noResultsFlag = 1;
+  } else {
+    if (noResultsFlag === 1) {
+      let h1 = document.getElementsByTagName('h1')[0];
+      div.removeChild(h1);
+      setPageStructure();
+    }
+    // following lines are to display the results
+    let numberOfPages = Math.ceil(results.length/10);
+    showPage(1, results);
+    if (noResultsFlag !== 1) {
+      removePageLinks();
+    }
+    appendPageLinks(numberOfPages);
+    const pagesSearch = document.querySelectorAll('a');
+    getPageNumber(pagesSearch, results);
+    noResultsFlag = 0;
+    return noResultsFlag;
+    }
+}
+
+
+// function to search the student based on the user user input when button is clicked
 function searchStudent (button) {
   button.addEventListener('click', () =>{
     const userInput = document.getElementsByTagName('input')[0].value;
@@ -193,50 +238,9 @@ function searchStudent (button) {
           || students[k].email.toString().toUpperCase().includes(userInput.toString().toUpperCase())){
             results.push(students[k]);
           }
-    }
-    // check if results array is empty and, if so, display it to the page
-    if (results.length === 0) {
-      noResults(noResultsFlag);
-      noResultsFlag = 1;
-    } else {
-      if (noResultsFlag === 1) {
-        let h1 = document.getElementsByTagName('h1')[0];
-        const div = document.getElementsByClassName('page')[0];
-        div.removeChild(h1);
-        const divChild = document.getElementsByClassName('page-header cf')[0]
-        setPageStructure(divChild);
-      }
-      // following lines are to display the results
-      let numberOfPages = Math.ceil(results.length/10);
-      showPage(1, results);
-      if (noResultsFlag !== 1) {
-        removePageLinks();
-      }
-      appendPageLinks(numberOfPages);
-      const pagesSearch = document.querySelectorAll('a');
-      getPageNumber(pagesSearch, results);
-      noResultsFlag = 0;
-      }
+        }
+    printSearchResults (results);
     });
-}
-
-// function to remove the pagination link
-function removePageLinks(){
-  const pageLinks = document.getElementsByClassName('pagination')[0];
-  const divPage = document.getElementsByClassName('page')[0];
-  divPage.removeChild(pageLinks);
-
-}
-
-function noResults (flag) {
-  if (flag === 0) {
-    removePageLinks();
-    const div = document.getElementsByClassName('page')[0];
-    hideStudents(div);
-    const noStudent = document.createElement('h1');
-    noStudent.textContent = 'NO STUDENT WAS FOUND';
-    div.appendChild(noStudent);
-  }
 }
 
 
@@ -254,49 +258,30 @@ function studentSearchWhileTyping(noResultsFlag) {
             results.push(students[k]);
           }
       }
-  // check if results array is empty and, if so, display it to the page
-  if (results.length === 0) {
-    noResults(noResultsFlag);
-    noResultsFlag = 1;
-  } else {
-    if (noResultsFlag === 1) {
-      let h1 = document.getElementsByTagName('h1')[0];
-      const div = document.getElementsByClassName('page')[0];
-      div.removeChild(h1);
-      const divChild = document.getElementsByClassName('page-header cf')[0]
-      setPageStructure(divChild);
-    }
-    // following lines are to display the results
-    let numberOfPages = Math.ceil(results.length/10);
-    showPage(1, results);
-    if (noResultsFlag !== 1) {
-      removePageLinks();
-    }
-    appendPageLinks(numberOfPages);
-    const pagesSearch = document.querySelectorAll('a');
-    getPageNumber(pagesSearch, results);
-    noResultsFlag = 0;
-    }
+    printSearchResults (results);
   });
 }
 
+// constants used throughout the program. HTML element that never change and stay there
+const div = document.getElementsByClassName('page')[0];
+const divChild = document.getElementsByClassName('page-header cf')[0];
 
+// populate the students list
 let students = constructStudentsList();
 // number of pages to display at the bottom
 let numberOfPages = Math.ceil(students.length/10);
-
 //display first page and append pagination link
 showPage(1, students);
 appendPageLinks(numberOfPages);
 
 // next 5 lines are for basic functionality of the site, without the searching part
-const divChild = document.getElementsByClassName('page-header cf')[0];
-setSearchStructure(divChild);
+setSearchStructure();
 const pages = document.querySelectorAll('a');
 const button = document.getElementsByTagName('button')[0];
 getPageNumber(pages, students);
 
 // call the 2 search functions
+// flag to handle the "no result" case
 let noResultsFlag = 0;
 studentSearchWhileTyping(noResultsFlag);
 searchStudent(button);
