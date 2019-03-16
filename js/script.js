@@ -58,10 +58,10 @@ function setSearchStructure(div) {
 /* function to get the increment for the element to display on the page.
 Should return 10 or the remaining number of students if the last page
 is being selected */
-function getIncrement(start) {
+function getIncrement(start, listOfStudents) {
   let maxIncrement;
-  if ((students.length - start) < 10){
-    maxIncrement = students.length - start;
+  if ((listOfStudents.length - start) < 10){
+    maxIncrement = listOfStudents.length - start;
   }
   else {
     maxIncrement = 10;
@@ -115,7 +115,7 @@ function showStudent (ul, student) {
 
 
 // function to show just the students for that page (10 students for page)
-function showPage (pageNumber) {
+function showPage (pageNumber, listOfStudents) {
 
   // remove previous elements from the page and set new structure for the students to display on a page
   const div = document.getElementsByClassName('page')[0];
@@ -128,11 +128,11 @@ function showPage (pageNumber) {
   let studentStartingFrom = (pageNumber * 10) - 10;
 
   // condition to check if you are on the last page
-  let increment = getIncrement(studentStartingFrom);
+  let increment = getIncrement(studentStartingFrom, listOfStudents);
 
   //display the 10 (or less) students on the page
   for (var i = studentStartingFrom; i < (studentStartingFrom + increment); i+= 1){
-    showStudent(ul, students[i]);
+    showStudent(ul, listOfStudents[i]);
   }
 }
 
@@ -165,7 +165,7 @@ function appendPageLinks(numberOfPages) {
 
 
 // function to get the page clicked by the user and then display it.
-function getPageNumber (pages){
+function getPageNumber (pages, listOfStudents){
   for (let i = 0; i < pages.length; i += 1){
     pages[i].addEventListener('click', (e) => {
       // remove the active class from pagination
@@ -173,7 +173,7 @@ function getPageNumber (pages){
         pages[h].classList.remove('active');
       }
       pageNumber = e.target.textContent;
-      showPage(pageNumber);
+      showPage(pageNumber, listOfStudents);
       // set the active class to the active page
       pages[pageNumber-1].className = 'active';
     });
@@ -194,8 +194,21 @@ function searchStudent (button) {
             results.push(students[k]);
           }
     }
-    console.log(results);
+
+    let numberOfPages = Math.ceil(results.length/10);
+    showPage(1, results);
+    removePageLinks();
+    appendPageLinks(numberOfPages);
+    const pagesSearch = document.querySelectorAll('a');
+    getPageNumber(pagesSearch, results);
   });
+}
+
+function removePageLinks(){
+  const pageLinks = document.getElementsByClassName('pagination')[0];
+  const divPage = document.getElementsByClassName('page')[0];
+  divPage.removeChild(pageLinks);
+
 }
 
 let students = constructStudentsList();
@@ -203,12 +216,12 @@ let students = constructStudentsList();
 let numberOfPages = Math.ceil(students.length/10);
 
 //display first page and append pagination link
-showPage(1);
+showPage(1, students);
 appendPageLinks(numberOfPages);
 
 const divChild = document.getElementsByClassName('page-header cf')[0];
 setSearchStructure(divChild);
 const pages = document.querySelectorAll('a');
 const button = document.getElementsByTagName('button')[0];
-getPageNumber(pages);
+getPageNumber(pages, students);
 searchStudent(button);
