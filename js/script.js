@@ -194,15 +194,18 @@ function searchStudent (button) {
             results.push(students[k]);
           }
     }
-
-    //once results are found, display them with new pagination
-    let numberOfPages = Math.ceil(results.length/10);
-    showPage(1, results);
-    removePageLinks();
-    appendPageLinks(numberOfPages);
-    const pagesSearch = document.querySelectorAll('a');
-    getPageNumber(pagesSearch, results);
-  });
+    if (results.length === 0) {
+      noResults();
+    } else {
+      // following lines are to display the results
+      let numberOfPages = Math.ceil(results.length/10);
+      showPage(1, results);
+      removePageLinks();
+      appendPageLinks(numberOfPages);
+      const pagesSearch = document.querySelectorAll('a');
+      getPageNumber(pagesSearch, results);
+      }
+    });
 }
 
 // function to remove the pagination link
@@ -213,8 +216,19 @@ function removePageLinks(){
 
 }
 
+function noResults (flag) {
+  if (flag === 0) {
+    removePageLinks();
+    const div = document.getElementsByClassName('page')[0];
+    hideStudents(div);
+    const noStudent = document.createElement('h1');
+    noStudent.textContent = 'NO STUDENT WAS FOUND';
+    div.appendChild(noStudent);
+  }
+}
+
 // function to dinamically search students while typing
-function studentSearchWhileTyping() {
+function studentSearchWhileTyping(noResultsFlag) {
   const input = document.getElementsByTagName('input')[0];
   input.addEventListener('keyup', () => {
     // go through every student in the list to find possible match(es)
@@ -226,15 +240,33 @@ function studentSearchWhileTyping() {
           || students[k].email.toString().toUpperCase().includes(userInput.toString().toUpperCase())){
             results.push(students[k]);
           }
-        }
-  let numberOfPages = Math.ceil(results.length/10);
-  showPage(1, results);
-  removePageLinks();
-  appendPageLinks(numberOfPages);
-  const pagesSearch = document.querySelectorAll('a');
-  getPageNumber(pagesSearch, results);
+      }
+  // check if results array is empty and, if so, display it to the page
+  if (results.length === 0) {
+    noResults(noResultsFlag);
+    noResultsFlag = 1;
+  } else {
+    if (noResultsFlag === 1) {
+      let h1 = document.getElementsByTagName('h1')[0];
+      const div = document.getElementsByClassName('page')[0];
+      div.removeChild(h1);
+      const divChild = document.getElementsByClassName('page-header cf')[0]
+      setPageStructure(divChild);
+    }
+    // following lines are to display the results
+    let numberOfPages = Math.ceil(results.length/10);
+    showPage(1, results);
+    if (noResultsFlag !== 1) {
+      removePageLinks();
+    }
+    appendPageLinks(numberOfPages);
+    const pagesSearch = document.querySelectorAll('a');
+    getPageNumber(pagesSearch, results);
+    noResultsFlag = 0;
+    }
   });
 }
+
 
 
 let students = constructStudentsList();
@@ -253,5 +285,6 @@ const button = document.getElementsByTagName('button')[0];
 getPageNumber(pages, students);
 
 // call the 2 search functions
-studentSearchWhileTyping();
+let noResultsFlag = 0;
+studentSearchWhileTyping(noResultsFlag);
 searchStudent(button);
