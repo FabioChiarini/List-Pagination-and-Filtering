@@ -194,16 +194,28 @@ function searchStudent (button) {
             results.push(students[k]);
           }
     }
+    // check if results array is empty and, if so, display it to the page
     if (results.length === 0) {
-      noResults();
+      noResults(noResultsFlag);
+      noResultsFlag = 1;
     } else {
+      if (noResultsFlag === 1) {
+        let h1 = document.getElementsByTagName('h1')[0];
+        const div = document.getElementsByClassName('page')[0];
+        div.removeChild(h1);
+        const divChild = document.getElementsByClassName('page-header cf')[0]
+        setPageStructure(divChild);
+      }
       // following lines are to display the results
       let numberOfPages = Math.ceil(results.length/10);
       showPage(1, results);
-      removePageLinks();
+      if (noResultsFlag !== 1) {
+        removePageLinks();
+      }
       appendPageLinks(numberOfPages);
       const pagesSearch = document.querySelectorAll('a');
       getPageNumber(pagesSearch, results);
+      noResultsFlag = 0;
       }
     });
 }
@@ -226,6 +238,7 @@ function noResults (flag) {
     div.appendChild(noStudent);
   }
 }
+
 
 // function to dinamically search students while typing
 function studentSearchWhileTyping(noResultsFlag) {
@@ -266,7 +279,6 @@ function studentSearchWhileTyping(noResultsFlag) {
     }
   });
 }
-
 
 
 let students = constructStudentsList();
